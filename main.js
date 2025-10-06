@@ -1,84 +1,82 @@
-let lives = 6;
-let words = [
-  'queryselector', 'document', 'form', 'onclick', 'handleclick',
-  'parentelement', 'margintop', 'zoologico', 'muercielago',
-  'internationalization', 'electroencefalograma',
-  'justifycontent', 'apendice', 'pauta', 'confidencial',
-  'reconocer', 'neuquen', 'oso'
+let vidas = 6;
+let palabras = [
+'hola', 'murcielago', 'escritorio', 'computadora', 'auriculares', 'escuela', 'proyecto', 
+'tiburon', 'centro', 'hipopotamo', 'corazon', 'mouse'
 ];
 
-// numero al azar entre 0 y cantidad de cosas en words
-let rn = Math.floor(Math.random() * words.length);
-// la palabra correcta
-let correctWord = words[rn];
-// lo que muestro con los guiones
-let revealedWord = [];
-// una lista de letras que no esta en correctWord
-let notInWord = [];
-// por cada letra en correctWord pongo un guion en revealedWord
-for (let letter of correctWord)
-  revealedWord.push('_');
-// mostrar todos los guiones
+
+let numero = Math.floor(Math.random() * palabras.length); //palabras.length significa cantidad de letras que tiene la palabra
+
+let PalabraCorrecta = palabras[numero]; // elije la palabra
+
+let progreso = []; //guiones
+
+let fallidos = []; //letras que no estan en la palabra, lleva un registro
+
+for (let i = 0; i < PalabraCorrecta.length; i++) // va letra por letra y pone un guion
+  progreso.push('_');
+
 updateScreen();
+
 
 function updateScreen() {
   let h2 = document.querySelector('#word');
   let pre = document.querySelector('pre');
   let h3 = document.querySelector('h3');
   let img = document.querySelector('img');
-  img.src = `img/${lives}.png`
-  pre.textContent = JSON.stringify(notInWord);
+  img.src = `img/${vidas}.png`
+  pre.textContent = JSON.stringify(fallidos);
   h2.textContent = '';
-  h3.textContent = `Vidas: ${lives}`;
-  for (let letter of revealedWord)
+  h3.textContent = `Vidas: ${vidas}`;
+  for (let letter of progreso)
     h2.textContent += `${letter} `;
 }
 
 
 function handleSubmit(e) {
-  e.preventDefault();
+  e.preventDefault(); // no recarga la pantalla
   // la letra que elegiste
-  let letter = e.target.letter.value;
-  // si el tipo ingresa una palabra y no una sola letra
-  if (letter.length > 1) {
-    if (letter == correctWord) { 
+  let letter = e.target.letter.value; // ??
+  
+  if (letter.length > 1) { // si pusiste una palabra y no una letra
+    if (letter == PalabraCorrecta) { 
       youWin();
-      for (let i = 0; i < correctWord.length; i++)
-        revealedWord[i] = correctWord[i];
+      for (let i = 0; i < PalabraCorrecta.length; i++)
+        progreso[i] = PalabraCorrecta[i];
       updateScreen();
       return;
     }
     else letter = letter[0];
   }
-  // no cuenta como jugada si ya elegiste esa letra
-  if (notInWord.includes(letter)) return;
+  
+  if (fallidos.includes(letter)) return; // revisa si la letra esta incluida en falllidos
   let miss = true;
-  // loopeamos todas las letras de correctWord
-  for (let i = 0; i < correctWord.length; i++) {
-    if (letter == correctWord[i]) { // si coincide
-      revealedWord[i] = letter;
+ 
+  for (let i = 0; i < PalabraCorrecta.length; i++) { //recorre letra por letra a ver si coincide
+    if (letter == PalabraCorrecta[i]) { // si coincide
+      progreso[i] = letter;
       miss = false;
     }
   }
-  if (miss) {
-    lives--;
-    notInWord.push(letter);
+  if (miss == true) {
+    vidas--;
+    fallidos.push(letter); // agrega la letra a fallidos
   }
-  // actualizamos pantalla para mostrar revealedWord
+  // actualizamos pantalla para mostrar progreso
   updateScreen();
-  if (lives == 0) gameOver();
-  if (!revealedWord.includes('_')) youWin();
+  if (vidas == 0) gameOver();
+  if (!progreso.includes('_')) youWin(); // si no hay mas guiones ganaste
   e.target.reset();
 }
 
 function youWin() {
-  document.querySelector('form > input').disabled = true;
+  //document.querySelector('form > input').disabled = true;
   let h1 = document.querySelector('h1');
-  h1.textContent = 'Ganaste! 😎';  
+  h1.textContent = 'Bien ahi, Ganaste';  //textcontent = cambia el titulo
 }
 
 function gameOver() {
-  document.querySelector('form > input').disabled = true;
+ //document.querySelector('form > input').disabled = true;
   let h1 = document.querySelector('h1');
-  h1.textContent = 'Game Over 💀';
+  h1.textContent = 'Perdiste bobo';
 }
